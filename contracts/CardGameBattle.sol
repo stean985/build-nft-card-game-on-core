@@ -61,7 +61,7 @@ contract CardBattleGame is Ownable, EIP712 {
 
     function registerPlayer(string memory _name) external {
         require(bytes(players[msg.sender].name).length == 0, "Player already registered");
-        players[msg.sender].name = _name;
+        players[msg.sender].YOUR_CODE_GOES_HERE = _name; //ASSIGNMENT #1
         players[msg.sender].playerAddress = msg.sender;
 
         emit PlayerRegistered(msg.sender, _name);
@@ -76,7 +76,7 @@ contract CardBattleGame is Ownable, EIP712 {
             player1TokenId: 0,    // Initialize to zero
             player2TokenId: 0,    // Initialize to zero
             startTime: block.timestamp,
-            resolved: false
+            resolved: YOUR_CODE_GOES_HERE //ASSIGNMENT #2
         });
 
         totalBattle++;
@@ -103,19 +103,19 @@ contract CardBattleGame is Ownable, EIP712 {
         require(_player2 != address(0), "Invalid player2 address");
         require(nftCollection.ownerOf(_player1TokenId) == battle.player1, "Player1 must own the specified NFT");
 
-        if(!isComputer){
+        if(!YOUR_CODE_GOES_HERE){ //ASSIGNMENT #3
             require(nftCollection.ownerOf(_player2TokenId) == _player2, "Player2 must own the specified NFT");
         }
 
         bytes32 structHash = keccak256(abi.encode(RESOLVE_BATTLE_TYPEHASH, _battleId, _player2, isComputer, _player1TokenId, _player2TokenId, _winner, _winnerExp, _loserExp));
-        bytes32 hash = _hashTypedDataV4(structHash);
+        bytes32 hash = _hashTypedDataV4(YOUR_CODE_GOES_HERE); //ASSIGNMENT #4
         require(ecrecover(hash, v, r, s) == owner(), "Invalid signature");
 
         // Update battle details
         battle.player2 = _player2;
         battle.player1TokenId = _player1TokenId;
         battle.player2TokenId = _player2TokenId;
-        battle.resolved = true;
+        battle.resolved = YOUR_CODE_GOES_HERE;  //ASSIGNMENT #5
 
         _updateBattleStats(_battleId, _winner, _winnerExp, _loserExp);
 
@@ -131,7 +131,7 @@ contract CardBattleGame is Ownable, EIP712 {
         // Update winner stats
         CharacterStats storage winnerStats = players[_winner].characterStats[winnerTokenId];
         winnerStats.exp += _winnerExp;
-        winnerStats.wins++;
+        winnerStats.YOUR_CODE_GOES_HERE; //ASSIGNMENT #6
         players[_winner].totalWins++;
         players[_winner].experience += _winnerExp;
 
@@ -139,7 +139,7 @@ contract CardBattleGame is Ownable, EIP712 {
         CharacterStats storage loserStats = players[loser].characterStats[loserTokenId];
         loserStats.exp += _loserExp;
         loserStats.losses++;
-        players[loser].totalLosses++;
+        players[loser].YOUR_CODE_GOES_HERE; //ASSIGNMENT #5
         players[loser].experience += _loserExp;
 
         // Level up logic
@@ -156,6 +156,15 @@ contract CardBattleGame is Ownable, EIP712 {
     // Helper functions
     function isPlayer(address addr) public view returns (bool) {
         return bytes(players[addr].name).length > 0;
+    }
+
+    function getCharacterStats(address _player, uint256 _tokenId) external view returns (CharacterStats memory) {
+        require(nftCollection.ownerOf(_tokenId) == _player, "Player does not own this token");
+        return players[_player].characterStats[_tokenId];
+    }
+
+    function getRequiredExp(uint256 _level) public pure returns (uint256) {
+        return _level * 100;
     }
 
     function getBaseHealth(CharacterClass _class) public pure returns (uint256) {
@@ -196,14 +205,5 @@ contract CardBattleGame is Ownable, EIP712 {
         if (_class == CharacterClass.WIZARD) return 40;
         if (_class == CharacterClass.CLERIC) return 70;
         return 60;
-    }
-
-    function getCharacterStats(address _player, uint256 _tokenId) external view returns (CharacterStats memory) {
-        require(nftCollection.ownerOf(_tokenId) == _player, "Player does not own this token");
-        return players[_player].characterStats[_tokenId];
-    }
-
-    function getRequiredExp(uint256 _level) public pure returns (uint256) {
-        return _level * 100;
     }
 }
