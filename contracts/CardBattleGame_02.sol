@@ -61,7 +61,7 @@ contract CardBattleGame is Ownable, EIP712 {
 
     function registerPlayer(string memory _name) external {
         require(bytes(players[msg.sender].name).length == 0, "Player already registered");
-        players[msg.sender].YOUR_CODE_GOES_HERE = _name; //ASSIGNMENT #1
+        players[msg.sender].name = _name; //ASSIGNMENT #1
         players[msg.sender].playerAddress = msg.sender;
 
         emit PlayerRegistered(msg.sender, _name);
@@ -76,7 +76,7 @@ contract CardBattleGame is Ownable, EIP712 {
             player1TokenId: 0,    // Initialize to zero
             player2TokenId: 0,    // Initialize to zero
             startTime: block.timestamp,
-            resolved: YOUR_CODE_GOES_HERE //ASSIGNMENT #2
+            resolved: false //ASSIGNMENT #2
         });
 
         totalBattle++;
@@ -103,19 +103,19 @@ contract CardBattleGame is Ownable, EIP712 {
         require(_player2 != address(0), "Invalid player2 address");
         require(nftCollection.ownerOf(_player1TokenId) == battle.player1, "Player1 must own the specified NFT");
 
-        if(!YOUR_CODE_GOES_HERE){ //ASSIGNMENT #3
+        if(!isComputer){ //ASSIGNMENT #3
             require(nftCollection.ownerOf(_player2TokenId) == _player2, "Player2 must own the specified NFT");
         }
 
         bytes32 structHash = keccak256(abi.encode(RESOLVE_BATTLE_TYPEHASH, _battleId, _player2, isComputer, _player1TokenId, _player2TokenId, _winner, _winnerExp, _loserExp));
-        bytes32 hash = _hashTypedDataV4(YOUR_CODE_GOES_HERE); //ASSIGNMENT #4
+        bytes32 hash = _hashTypedDataV4(structHash); //ASSIGNMENT #4
         require(ecrecover(hash, v, r, s) == owner(), "Invalid signature");
 
         // Update battle details
         battle.player2 = _player2;
         battle.player1TokenId = _player1TokenId;
         battle.player2TokenId = _player2TokenId;
-        battle.resolved = YOUR_CODE_GOES_HERE;  //ASSIGNMENT #5
+        battle.resolved = true;  //ASSIGNMENT #5
 
         _updateBattleStats(_battleId, _winner, _winnerExp, _loserExp);
 
@@ -131,7 +131,7 @@ contract CardBattleGame is Ownable, EIP712 {
         // Update winner stats
         CharacterStats storage winnerStats = players[_winner].characterStats[winnerTokenId];
         winnerStats.exp += _winnerExp;
-        winnerStats.YOUR_CODE_GOES_HERE; //ASSIGNMENT #6
+        winnerStats.wins++; //ASSIGNMENT #6
         players[_winner].totalWins++;
         players[_winner].experience += _winnerExp;
 
@@ -139,7 +139,7 @@ contract CardBattleGame is Ownable, EIP712 {
         CharacterStats storage loserStats = players[loser].characterStats[loserTokenId];
         loserStats.exp += _loserExp;
         loserStats.losses++;
-        players[loser].YOUR_CODE_GOES_HERE; //ASSIGNMENT #5
+        players[loser].totalLosses++; //ASSIGNMENT #5
         players[loser].experience += _loserExp;
 
         // Level up logic
