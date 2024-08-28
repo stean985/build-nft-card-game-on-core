@@ -14,7 +14,7 @@ contract CardBattleGame is Ownable, EIP712 {
 
 
     struct Player {
-        YOUR_CODE_GOES_HERE name; // ASSIGNMENT #1
+        string name; // ASSIGNMENT #1
         address playerAddress;
         uint256 totalWins;
         uint256 totalLosses; 
@@ -27,7 +27,7 @@ contract CardBattleGame is Ownable, EIP712 {
         uint256 level;
         uint256 exp;
         uint256 health;
-        YOUR_CODE_GOES_HERE mana; // ASSIGNMENT #2
+        uint256 mana; // ASSIGNMENT #2
         uint256 attack;
         uint256 defense;
         uint256 wins;
@@ -35,7 +35,7 @@ contract CardBattleGame is Ownable, EIP712 {
     }
 
 
-    YOUR_CODE_GOES_HERE Battle { // ASSIGNMENT #3
+    struct Battle { // ASSIGNMENT #3
         string name;
         address player1;
         address player2;
@@ -46,10 +46,10 @@ contract CardBattleGame is Ownable, EIP712 {
     }
 
     bytes32 private constant RESOLVE_BATTLE_TYPEHASH = keccak256("ResolveBattle(uint256 battleId,address _player2, bool isComputer,uint256 _player1TokenId,uint256 _player2TokenId,address _winner,uint256 _winnerExp,uint256 _loserExp)");    uint256 public totalBattle;
-    mapping(address => YOUR_CODE_GOES_HERE) public players; // ASSIGNMENT #4
+    mapping(address => Player) public players; // ASSIGNMENT #4
     mapping(uint256 => Battle) public battles;
 
-    event PlayerRegistered(address indexed playerAddress, YOUR_CODE_GOES_HERE name); // ASSIGNMENT #5
+    event PlayerRegistered(address indexed playerAddress, string name); // ASSIGNMENT #5
     event BattleRegistered(uint256 indexed battleId, string name, address indexed player1);
     event BattleResolved(uint256 indexed battleId, address indexed winner, address indexed loser, uint256 winnerExp, uint256 loserExp);
 
